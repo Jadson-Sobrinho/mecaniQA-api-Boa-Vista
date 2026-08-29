@@ -31,4 +31,36 @@ public class ServicoRepository {
     public void salvar(Servico servico) {
         servicos.add(servico);
     }
+
+    public Servico buscarPorCodigo(Long codigo) {
+        for (Servico servico : servicos) {
+            if (servico.getCodigo().equals(codigo)) {
+                return servico;
+            }
+        }
+
+        return null;
+    }
+
+    public boolean atualizar(Long codigo, Servico servicoAtualizado) {
+        Servico servico = buscarPorCodigo(codigo);
+
+        if (servico == null) {
+            return false;
+        }
+
+        servico.setNome(servicoAtualizado.getNome());
+        servico.setTempoEstimado(servicoAtualizado.getTempoEstimado());
+        servico.setCustoTabelado(servicoAtualizado.getCustoTabelado());
+
+        return true;
+    }
+
+    public boolean deletar(Long codigo) {
+        return servicos.removeIf(servico ->
+                servico.getCodigo().equals(codigo)
+        );
+    }
 }
+
+
