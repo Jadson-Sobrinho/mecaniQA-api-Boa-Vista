@@ -3,6 +3,8 @@ import java.time.LocalDateTime;
 
 public class Peca {
 
+    private static long proximoCodigo = 1L;
+
     private Long codigo;
     private String nome;
     private String codigoBarras;
@@ -17,7 +19,6 @@ public class Peca {
     private String cor;
 
     public Peca(
-            Long codigo,
             String nome,
             String codigoBarras,
             String fornecedorMarca,
@@ -26,7 +27,7 @@ public class Peca {
             double precoVenda,
             CategoriaPeca categoria
     ) {
-        this.codigo = codigo;
+        this.codigo = proximoCodigo++;
         this.nome = nome;
         this.codigoBarras = codigoBarras;
         this.fornecedorMarca = fornecedorMarca;
