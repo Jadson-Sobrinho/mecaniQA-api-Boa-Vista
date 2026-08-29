@@ -40,7 +40,6 @@ public class PecaController {
     public Peca salvar(@RequestBody PecaRequest request) {
 
         Peca peca = new Peca(
-                request.codigo(),
                 request.nome(),
                 request.codigoBarras(),
                 request.fornecedorMarca(),
