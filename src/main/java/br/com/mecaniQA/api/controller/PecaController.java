@@ -3,6 +3,7 @@ package br.com.mecaniQA.api.controller;
 import br.com.mecaniQA.api.model.CategoriaPeca;
 import br.com.mecaniQA.api.model.Peca;
 import br.com.mecaniQA.api.repository.PecaRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,11 +19,16 @@ public class PecaController {
         this.repository = PecaRepository.getInstance();
     }
 
+    // GET /api/pecas
+    // 200 OK
     @GetMapping
-    public List<Peca> listar() {
-        return repository.listar();
+    public ResponseEntity<List<Peca>> listar() {
+
+        return ResponseEntity.ok(repository.listar());
     }
 
+    // GET /api/pecas/{codigo}
+    // 200 OK ou 404 Not Found
     @GetMapping("/{codigo}")
     public ResponseEntity<Peca> buscarPorCodigo(
             @PathVariable Long codigo) {
@@ -36,8 +42,11 @@ public class PecaController {
         return ResponseEntity.ok(peca);
     }
 
+    // POST /api/pecas
+    // 201 Created
     @PostMapping
-    public Peca salvar(@RequestBody PecaRequest request) {
+    public ResponseEntity<Peca> salvar(
+            @RequestBody PecaRequest request) {
 
         Peca peca = new Peca(
                 request.nome(),
@@ -54,9 +63,13 @@ public class PecaController {
 
         repository.salvar(peca);
 
-        return peca;
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(peca);
     }
 
+    // PUT /api/pecas/{codigo}
+    // 200 OK ou 404 Not Found
     @PutMapping("/{codigo}")
     public ResponseEntity<Peca> atualizar(
             @PathVariable Long codigo,
@@ -81,6 +94,8 @@ public class PecaController {
         return ResponseEntity.ok(peca);
     }
 
+    // DELETE /api/pecas/{codigo}
+    // 204 No Content ou 404 Not Found
     @DeleteMapping("/{codigo}")
     public ResponseEntity<Void> deletar(
             @PathVariable Long codigo) {

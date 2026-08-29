@@ -2,6 +2,7 @@ package br.com.mecaniQA.api.controller;
 
 import br.com.mecaniQA.api.model.Servico;
 import br.com.mecaniQA.api.repository.ServicoRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +18,16 @@ public class ServicoController {
         this.repository = ServicoRepository.getInstance();
     }
 
+    // GET /api/servicos
+    // 200 OK
     @GetMapping
-    public List<Servico> listar() {
-        return repository.listar();
+    public ResponseEntity<List<Servico>> listar() {
+
+        return ResponseEntity.ok(repository.listar());
     }
 
+    // GET /api/servicos/{codigo}
+    // 200 OK ou 404 Not Found
     @GetMapping("/{codigo}")
     public ResponseEntity<Servico> buscarPorCodigo(
             @PathVariable Long codigo) {
@@ -35,8 +41,11 @@ public class ServicoController {
         return ResponseEntity.ok(servico);
     }
 
+    // POST /api/servicos
+    // 201 Created
     @PostMapping
-    public Servico salvar(@RequestBody ServicoRequest request) {
+    public ResponseEntity<Servico> salvar(
+            @RequestBody ServicoRequest request) {
 
         Servico servico = new Servico(
                 request.nome(),
@@ -46,9 +55,13 @@ public class ServicoController {
 
         repository.salvar(servico);
 
-        return servico;
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(servico);
     }
 
+    // PUT /api/servicos/{codigo}
+    // 200 OK ou 404 Not Found
     @PutMapping("/{codigo}")
     public ResponseEntity<Servico> atualizar(
             @PathVariable Long codigo,
@@ -67,6 +80,8 @@ public class ServicoController {
         return ResponseEntity.ok(servico);
     }
 
+    // DELETE /api/servicos/{codigo}
+    // 204 No Content ou 404 Not Found
     @DeleteMapping("/{codigo}")
     public ResponseEntity<Void> deletar(
             @PathVariable Long codigo) {
