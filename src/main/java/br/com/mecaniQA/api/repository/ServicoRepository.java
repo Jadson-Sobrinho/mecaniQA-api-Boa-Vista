@@ -1,6 +1,6 @@
 package br.com.mecaniQA.api.repository;
 
-import br.com.mecaniQA.api.Servico;
+import br.com.mecaniQA.api.model.Servico;
 
 import java.util.ArrayList;
 import java.util.List;

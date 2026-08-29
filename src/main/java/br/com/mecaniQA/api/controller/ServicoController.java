@@ -1,105 +1,43 @@
-package com.mecaniqa.controller;
+package br.com.mecaniQA.api.controller;
 
-import com.mecaniqa.model.Servico;
-import com.mecaniqa.repository.ServicoRepository;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import br.com.mecaniQA.api.model.Servico;
+import br.com.mecaniQA.api.repository.ServicoRepository;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/servicos")
+@RequestMapping("/servicos")
 public class ServicoController {
 
-    private final ServicoRepository repository =
-            ServicoRepository.getInstance();
+    private final ServicoRepository repository;
 
-    // US05 - Cadastrar serviço
-    @PostMapping
-    public ResponseEntity<Servico> cadastrar(
-            @RequestBody Servico servico
-    ) {
-
-        servico.setDataCriacao(LocalDateTime.now());
-        servico.setDataUltimaAtualizacao(LocalDateTime.now());
-
-        Servico novoServico = repository.salvar(servico);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(novoServico);
+    public ServicoController() {
+        this.repository = ServicoRepository.getInstance();
     }
 
-    // US06 - Listar serviços
     @GetMapping
-    public ResponseEntity<List<Servico>> listar() {
+    public List<Servico> listar() {
+        return repository.listar();
+    }
 
-        return ResponseEntity.ok(
-                repository.listarTodos()
+    @PostMapping
+    public Servico salvar(@RequestBody ServicoRequest request) {
+
+        Servico servico = new Servico(
+                request.nome(),
+                request.tempoEstimado(),
+                request.custoTabelado()
         );
+
+        repository.salvar(servico);
+
+        return servico;
     }
 
-    // Buscar serviço por código
-    @GetMapping("/{codigo}")
-    public ResponseEntity<Servico> buscar(
-            @PathVariable Long codigo
-    ) {
-
-        return repository.buscarPorCodigo(codigo)
-                .map(ResponseEntity::ok)
-                .orElseGet(() ->
-                        ResponseEntity.notFound().build()
-                );
-    }
-
-    // US07 - Atualizar serviço
-    @PutMapping("/{codigo}")
-    public ResponseEntity<Servico> atualizar(
-            @PathVariable Long codigo,
-            @RequestBody Servico dados
-    ) {
-
-        return repository.buscarPorCodigo(codigo)
-                .map(servico -> {
-
-                    servico.setNome(
-                            dados.getNome()
-                    );
-
-                    servico.setTempoEstimadoMinutos(
-                            dados.getTempoEstimadoMinutos()
-                    );
-
-                    servico.setCustoTabelado(
-                            dados.getCustoTabelado()
-                    );
-
-                    servico.setDataUltimaAtualizacao(
-                            LocalDateTime.now()
-                    );
-
-                    return ResponseEntity.ok(servico);
-                })
-                .orElseGet(() ->
-                        ResponseEntity.notFound().build()
-                );
-    }
-
-    // US08 - Excluir serviço
-    @DeleteMapping("/{codigo}")
-    public ResponseEntity<Void> deletar(
-            @PathVariable Long codigo
-    ) {
-
-        boolean removido = repository.deletar(codigo);
-
-        if (!removido) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.noContent().build();
-    }
+    public record ServicoRequest(
+            String nome,
+            String tempoEstimado,
+            double custoTabelado
+    ) {}
 }
