@@ -1,7 +1,8 @@
+```java
 package br.com.mecaniQA.api.model;
+
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class OrdemServico {
 
@@ -12,7 +13,7 @@ public class OrdemServico {
     private List<Servico> servicos;
 
     private OrdemServico(Builder builder) {
-        this.id = builder.id;
+        this.codigo = builder.codigo;
         this.descricao = builder.descricao;
         this.status = builder.status;
         this.pecas = builder.pecas;
@@ -21,15 +22,14 @@ public class OrdemServico {
 
     public static class Builder {
 
-        private Long id;
+        private Long codigo;
         private String descricao;
         private StatusOrdemServico status = StatusOrdemServico.ABERTO;
         private List<Peca> pecas = new ArrayList<>();
         private List<Servico> servicos = new ArrayList<>();
 
-
-        public Builder id(Long id) {
-            this.id = id;
+        public Builder codigo(Long codigo) {
+            this.codigo = codigo;
             return this;
         }
 
@@ -58,10 +58,8 @@ public class OrdemServico {
         }
     }
 
-    
-
-    public Long getId() {
-        return id;
+    public Long getCodigo() {
+        return codigo;
     }
 
     public String getDescricao() {
@@ -80,8 +78,8 @@ public class OrdemServico {
         return servicos;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCodigo(Long codigo) {
+        this.codigo = codigo;
     }
 
     public void setDescricao(String descricao) {
@@ -99,5 +97,23 @@ public class OrdemServico {
     public void setServicos(List<Servico> servicos) {
         this.servicos = servicos;
     }
-
 }
+```
+
+Agora o `codigo` está consistente em toda a classe:
+
+* `private Long codigo`
+* `Builder.codigo(Long codigo)`
+* `this.codigo = builder.codigo`
+* `getCodigo()`
+* `setCodigo(Long codigo)`
+
+E o Builder continua permitindo, por exemplo:
+
+```java
+OrdemServico os = new OrdemServico.Builder()
+        .codigo(1L)
+        .descricao("Troca de óleo")
+        .status(StatusOrdemServico.ABERTO)
+        .build();
+```
