@@ -1,4 +1,3 @@
-```java
 package br.com.mecaniQA.api.model;
 
 import java.util.ArrayList;
@@ -98,22 +97,3 @@ public class OrdemServico {
         this.servicos = servicos;
     }
 }
-```
-
-Agora o `codigo` está consistente em toda a classe:
-
-* `private Long codigo`
-* `Builder.codigo(Long codigo)`
-* `this.codigo = builder.codigo`
-* `getCodigo()`
-* `setCodigo(Long codigo)`
-
-E o Builder continua permitindo, por exemplo:
-
-```java
-OrdemServico os = new OrdemServico.Builder()
-        .codigo(1L)
-        .descricao("Troca de óleo")
-        .status(StatusOrdemServico.ABERTO)
-        .build();
-```
