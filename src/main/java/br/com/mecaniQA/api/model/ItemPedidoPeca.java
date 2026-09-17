@@ -1,8 +1,8 @@
-package com.mecaniqa.model;
+package br.com.mecaniQA.api.model;
 
 public class ItemPedidoPeca {
 
-    private Long id;
+    private Long codigo;
     private PedidoPecas pedido;
     private Peca peca;
     private Integer quantidade;
@@ -10,17 +10,17 @@ public class ItemPedidoPeca {
     public ItemPedidoPeca() {
     }
 
-    public ItemPedidoPeca(Long id, PedidoPecas pedido,
-        Peca peca, Integer quantidade) {
-        this.id = id;
+    public ItemPedidoPeca(Long codigo, PedidoPecas pedido,
+            Peca peca, Integer quantidade) {
+
+        this.codigo = codigo;
         this.pedido = pedido;
         this.peca = peca;
         this.quantidade = quantidade;
     }
 
-
-    public Long getId() {
-        return id;
+    public Long getCodigo() {
+        return codigo;
     }
 
     public PedidoPecas getPedido() {
@@ -35,8 +35,8 @@ public class ItemPedidoPeca {
         return quantidade;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCodigo(Long codigo) {
+        this.codigo = codigo;
     }
 
     public void setPedido(PedidoPecas pedido) {

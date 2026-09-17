@@ -14,7 +14,8 @@ public class PedidoPecas {
     }
 
     public PedidoPecas(Long codigo, StatusPedidoPecas status,
-        List<ItemPedidoPeca> itens) {
+            List<ItemPedidoPeca> itens) {
+
         this.codigo = codigo;
         this.status = status;
         this.itens = itens;
@@ -44,33 +45,29 @@ public class PedidoPecas {
         if (item.getPedido() == this) {
             item.setPedido(null);
         }
+    }
 
+    public Long getCodigo() {
+        return codigo;
+    }
 
+    public StatusPedidoPecas getStatus() {
+        return status;
+    }
 
-        public Long getCodigo() {
-            return codigo;
-        }
+    public List<ItemPedidoPeca> getItens() {
+        return itens;
+    }
 
-        public StatusPedidoPecas getStatus() {
-            return status;
-        }
+    public void setCodigo(Long codigo) {
+        this.codigo = codigo;
+    }
 
-        public List<ItemPedidoPeca> getItens() {
-            return itens;
-        }
+    public void setStatus(StatusPedidoPecas status) {
+        this.status = status;
+    }
 
-        
-
-        public void setCodigo(Long codigo) {
-            this.codigo = codigo;
-        }
-
-        public void setStatus(StatusPedidoPecas status) {
-            this.status = status;
-        }
-
-        public void setItens(List<ItemPedidoPeca> itens) {
-            this.itens = itens;
-        }
+    public void setItens(List<ItemPedidoPeca> itens) {
+        this.itens = itens;
     }
 }
