@@ -10,13 +10,58 @@ public class ItemPedidoPeca {
     public ItemPedidoPeca() {
     }
 
-    public ItemPedidoPeca(Long codigo, PedidoPecas pedido,
-            Peca peca, Integer quantidade) {
+    public ItemPedidoPeca(
+            Long codigo,
+            PedidoPecas pedido,
+            Peca peca,
+            Integer quantidade) {
 
         this.codigo = codigo;
         this.pedido = pedido;
         this.peca = peca;
         this.quantidade = quantidade;
+    }
+
+    // =========================
+    // BUILDER
+    // =========================
+
+    public static class Builder {
+
+        private Long codigo;
+        private PedidoPecas pedido;
+        private Peca peca;
+        private Integer quantidade;
+
+        public Builder codigo(Long codigo) {
+            this.codigo = codigo;
+            return this;
+        }
+
+        public Builder pedido(PedidoPecas pedido) {
+            this.pedido = pedido;
+            return this;
+        }
+
+        public Builder peca(Peca peca) {
+            this.peca = peca;
+            return this;
+        }
+
+        public Builder quantidade(Integer quantidade) {
+            this.quantidade = quantidade;
+            return this;
+        }
+
+        public ItemPedidoPeca build() {
+
+            return new ItemPedidoPeca(
+                    codigo,
+                    pedido,
+                    peca,
+                    quantidade
+            );
+        }
     }
 
     public Long getCodigo() {

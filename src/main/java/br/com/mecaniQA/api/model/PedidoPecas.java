@@ -13,18 +13,93 @@ public class PedidoPecas {
         this.itens = new ArrayList<>();
     }
 
-    public PedidoPecas(Long codigo, StatusPedidoPecas status,
+    public PedidoPecas(
+            Long codigo,
+            StatusPedidoPecas status,
             List<ItemPedidoPeca> itens) {
 
         this.codigo = codigo;
         this.status = status;
-        this.itens = itens;
+        this.itens = itens != null
+                ? itens
+                : new ArrayList<>();
     }
 
-    public void adicionarItem(ItemPedidoPeca item) {
+    // =========================
+    // BUILDER
+    // =========================
+
+    public static class Builder {
+
+        private Long codigo;
+        private StatusPedidoPecas status =
+                StatusPedidoPecas.EM_ORCAMENTO;
+
+        private List<ItemPedidoPeca> itens =
+                new ArrayList<>();
+
+        public Builder codigo(Long codigo) {
+            this.codigo = codigo;
+            return this;
+        }
+
+        public Builder status(StatusPedidoPecas status) {
+
+            if (status != null) {
+                this.status = status;
+            }
+
+            return this;
+        }
+
+        public Builder itens(List<ItemPedidoPeca> itens) {
+
+            if (itens != null) {
+                this.itens = itens;
+            }
+
+            return this;
+        }
+
+        public Builder adicionarItem(ItemPedidoPeca item) {
+
+            if (item != null) {
+                this.itens.add(item);
+            }
+
+            return this;
+        }
+
+        public PedidoPecas build() {
+
+            PedidoPecas pedido = new PedidoPecas(
+                    codigo,
+                    status,
+                    itens
+            );
+
+            for (ItemPedidoPeca item : itens) {
+                if (item != null) {
+                    item.setPedido(pedido);
+                }
+            }
+
+            return pedido;
+        }
+    }
+
+    // =========================
+    // ITENS
+    // =========================
+
+    public boolean adicionarItem(ItemPedidoPeca item) {
 
         if (item == null) {
-            return;
+            return false;
+        }
+
+        if (status != StatusPedidoPecas.EM_ORCAMENTO) {
+            return false;
         }
 
         if (!itens.contains(item)) {
@@ -32,20 +107,34 @@ public class PedidoPecas {
         }
 
         item.setPedido(this);
+
+        return true;
     }
 
-    public void removerItem(ItemPedidoPeca item) {
+    public boolean removerItem(ItemPedidoPeca item) {
 
         if (item == null) {
-            return;
+            return false;
         }
 
-        itens.remove(item);
+        if (status != StatusPedidoPecas.EM_ORCAMENTO) {
+            return false;
+        }
+
+        if (!itens.remove(item)) {
+            return false;
+        }
 
         if (item.getPedido() == this) {
             item.setPedido(null);
         }
+
+        return true;
     }
+
+    // =========================
+    // GETTERS
+    // =========================
 
     public Long getCodigo() {
         return codigo;
@@ -58,6 +147,10 @@ public class PedidoPecas {
     public List<ItemPedidoPeca> getItens() {
         return itens;
     }
+
+    // =========================
+    // SETTERS
+    // =========================
 
     public void setCodigo(Long codigo) {
         this.codigo = codigo;
