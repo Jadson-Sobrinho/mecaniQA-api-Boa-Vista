@@ -1,8 +1,10 @@
 package br.com.mecaniQA.api.controller;
 
-import br.com.mecaniQA.api.model.CategoriaPeca;
+import br.com.mecaniQA.api.dto.PecaDTO;
+import br.com.mecaniQA.api.mapper.PecaMapper;
 import br.com.mecaniQA.api.model.Peca;
 import br.com.mecaniQA.api.repository.PecaRepository;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,106 +21,91 @@ public class PecaController {
         this.repository = PecaRepository.getInstance();
     }
 
-    // GET /api/pecas
-    // 200 OK
     @GetMapping
-    public ResponseEntity<List<Peca>> listar() {
+    public ResponseEntity<List<PecaDTO>> listar() {
 
-        return ResponseEntity.ok(repository.listar());
+        List<PecaDTO> pecas = repository.listar().stream().map(PecaMapper::toDTO).toList();
+
+        return ResponseEntity.ok(pecas);
     }
 
-    // GET /api/pecas/{codigo}
-    // 200 OK ou 404 Not Found
     @GetMapping("/{codigo}")
-    public ResponseEntity<Peca> buscarPorCodigo(
-            @PathVariable Long codigo) {
+    public ResponseEntity<?> buscarPorCodigo(@PathVariable Long codigo) {
 
         Peca peca = repository.buscarPorCodigo(codigo);
 
         if (peca == null) {
-            return ResponseEntity.notFound().build();
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Peça não encontrada.");
         }
 
-        return ResponseEntity.ok(peca);
+        return ResponseEntity.ok(PecaMapper.toDTO(peca));
     }
 
-    // POST /api/pecas
-    // 201 Created
     @PostMapping
-    public ResponseEntity<Peca> salvar(
-            @RequestBody PecaRequest request) {
+    public ResponseEntity<?> salvar(@RequestBody PecaDTO dto) {
 
-        Peca peca = new Peca(
-                request.nome(),
-                request.codigoBarras(),
-                request.fornecedorMarca(),
-                request.quantidadeEstoque(),
-                request.precoCusto(),
-                request.precoVenda(),
-                request.categoria()
-        );
+        if (dto.getNome() == null || dto.getNome().trim().isEmpty()) {
 
-        peca.setTamanho(request.tamanho());
-        peca.setCor(request.cor());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O nome da peça é obrigatório.");
+        }
+
+        if (dto.getCategoria() == null) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A categoria da peça é obrigatória.");
+        }
+
+        Peca peca = PecaMapper.toEntity(dto);
 
         repository.salvar(peca);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(peca);
+        return ResponseEntity.status(HttpStatus.CREATED).body(PecaMapper.toDTO(peca));
     }
 
-    // PUT /api/pecas/{codigo}
-    // 200 OK ou 404 Not Found
     @PutMapping("/{codigo}")
-    public ResponseEntity<Peca> atualizar(
-            @PathVariable Long codigo,
-            @RequestBody PecaRequest request) {
+    public ResponseEntity<?> atualizar(@PathVariable Long codigo, @RequestBody PecaDTO dto) {
+
+        Peca existente = repository.buscarPorCodigo(codigo);
+
+        if (existente == null) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Peça não encontrada.");
+        }
+
+        if (dto.getNome() == null || dto.getNome().trim().isEmpty()) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O nome da peça é obrigatório.");
+        }
+
+        if (dto.getCategoria() == null) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A categoria da peça é obrigatória.");
+        }
+
+        Peca pecaAtualizada = PecaMapper.toEntity(dto);
+
+        boolean atualizada = repository.atualizar(codigo, pecaAtualizada);
+
+        if (!atualizada) {
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Peça não encontrada.");
+        }
 
         Peca peca = repository.buscarPorCodigo(codigo);
 
-        if (peca == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        peca.setNome(request.nome());
-        peca.setCodigoBarras(request.codigoBarras());
-        peca.setFornecedorMarca(request.fornecedorMarca());
-        peca.setQuantidadeEstoque(request.quantidadeEstoque());
-        peca.setPrecoCusto(request.precoCusto());
-        peca.setPrecoVenda(request.precoVenda());
-        peca.setCategoria(request.categoria());
-        peca.setTamanho(request.tamanho());
-        peca.setCor(request.cor());
-
-        return ResponseEntity.ok(peca);
+        return ResponseEntity.ok(PecaMapper.toDTO(peca));
     }
 
-    // DELETE /api/pecas/{codigo}
-    // 204 No Content ou 404 Not Found
     @DeleteMapping("/{codigo}")
-    public ResponseEntity<Void> deletar(
-            @PathVariable Long codigo) {
+    public ResponseEntity<?> deletar(@PathVariable Long codigo) {
 
         boolean removido = repository.deletar(codigo);
 
         if (!removido) {
-            return ResponseEntity.notFound().build();
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Peça não encontrada.");
         }
 
         return ResponseEntity.noContent().build();
     }
-
-    public record PecaRequest(
-            Long codigo,
-            String nome,
-            String codigoBarras,
-            String fornecedorMarca,
-            int quantidadeEstoque,
-            double precoCusto,
-            double precoVenda,
-            CategoriaPeca categoria,
-            String tamanho,
-            String cor
-    ) {}
 }
