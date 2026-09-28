@@ -1,0 +1,390 @@
+{
+  "info": {
+    "_postman_id": "a99bd6e1-5a7c-40c2-9a87-a363baa205fe",
+    "name": "TESTES - User Story",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "35186501"
+  },
+  "item": [
+    {
+      "name": "OAT1",
+      "item": [
+        {
+          "name": "Gestão de Peças",
+          "item": [
+            {
+              "name": "US01 - Cadastro de nova Peça",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"nome\": \"Pastilha de Freio Dianteira\",\r\n  \"codigoBarras\": \"7891234567890\",\r\n  \"fornecedorMarca\": \"Bosch\",\r\n  \"quantidadeEstoque\": 20,\r\n  \"precoCusto\": 85.50,\r\n  \"precoVenda\": 129.90,\r\n  \"categoria\": \"FREIOS\",\r\n  \"tamanho\": \"M\",\r\n  \"cor\": \"Preto\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/pecas",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "pecas"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "US02 - Listar catálogo de peças",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/api/pecas",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "pecas"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "US03 - Atualizar peça do catálogo",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"nome\": \"Pastilha de Freio Dianteira Bosch\",\r\n  \"codigoBarras\": \"7891234567890\",\r\n  \"fornecedorMarca\": \"Bosch\",\r\n  \"quantidadeEstoque\": 35,\r\n  \"precoCusto\": 92.00,\r\n  \"precoVenda\": 145.90,\r\n  \"categoria\": \"FREIOS\",\r\n  \"tamanho\": \"M\",\r\n  \"cor\": \"Preto\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/pecas/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "pecas",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "US04 - Excluir peça do catálogo",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/api/pecas/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "pecas",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Gestão de Serviços",
+          "item": [
+            {
+              "name": "US05 - Cadastro de novo Serviço",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"nome\": \"Troca de Óleo\",\r\n  \"tempoEstimado\": \"30 minutos\",\r\n  \"custoTabelado\": 80.00\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/servicos",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "servicos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "US06 - Listar catálogo de serviços",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/api/servicos",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "servicos"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "US07 - Atualizar serviço do catálogo",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"nome\": \"Troca de Óleo Completa\",\r\n  \"tempoEstimado\": \"45 minutos\",\r\n  \"custoTabelado\": 95.00\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/servicos/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "servicos",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "US08 - Excluir serviço do catálogo",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8080/api/servicos/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "servicos",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "OAT2",
+      "item": [
+        {
+          "name": "Gestão de OS",
+          "item": [
+            {
+              "name": "US01 - Criar uma Ordem de Serviço (OS)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"descricao\": \"Troca das pastilhas de freio dianteiras\",\r\n  \"status\": \"ABERTO\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/ordens-servico",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "ordens-servico"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "US02 - Modificar status da Ordem de Serviço",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"descricao\": \"Troca das pastilhas de freio dianteiras\",\r\n  \"status\": \"EXECUCAO\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/ordens-servico/1",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "ordens-servico",
+                    "1"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Gestão de Pedido Peças",
+          "item": [
+            {
+              "name": "US03 - Criar um Pedido",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/pedidos-pecas",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "pedidos-pecas"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "US04 - Adicionar peças a um pedido existente",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"pecaCodigo\": 1,\r\n  \"quantidade\": 4\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/pedidos-pecas/1/itens",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "pedidos-pecas",
+                    "1",
+                    "itens"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "US05 - Modificar o status do Pedido",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"status\": \"PENDENTE_PAGAMENTO\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/pedidos-pecas/1/status",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "pedidos-pecas",
+                    "1",
+                    "status"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
