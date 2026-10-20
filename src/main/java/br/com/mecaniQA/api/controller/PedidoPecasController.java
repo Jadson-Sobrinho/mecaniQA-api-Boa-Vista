@@ -1,201 +1,91 @@
 package br.com.mecaniQA.api.controller;
 
-import br.com.mecaniQA.api.dto.PedidoPecasDTO;
-import br.com.mecaniQA.api.mapper.PedidoPecasMapper;
-import br.com.mecaniQA.api.model.ItemPedidoPeca;
-import br.com.mecaniQA.api.model.Peca;
-import br.com.mecaniQA.api.model.PedidoPecas;
-import br.com.mecaniQA.api.model.StatusPedidoPecas;
-import br.com.mecaniQA.api.repository.PecaRepository;
-import br.com.mecaniQA.api.repository.PedidoPecasRepository;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import br.com.mecaniQA.api.dto.*;
+import br.com.mecaniQA.api.service.PedidoPecasService;
+import br.com.mecaniQA.api.exception.*;
 
 @RestController
 @RequestMapping("/api/pedidos-pecas")
 public class PedidoPecasController {
-
-    private final PedidoPecasRepository repository;
-    private final PecaRepository pecaRepository;
-
-    public PedidoPecasController() {
-
-        this.repository =
-                PedidoPecasRepository.getInstance();
-
-        this.pecaRepository =
-                PecaRepository.getInstance();
-    }
-
-    // =========================
-    // CRIAR PEDIDO
-    // =========================
-
-    @PostMapping
-    public ResponseEntity<?> criar(
-            @RequestBody PedidoPecasDTO dto) {
-
-        PedidoPecas pedido =
-                new PedidoPecas.Builder()
-                        .status(StatusPedidoPecas.EM_ORCAMENTO)
-                        .build();
-
-        PedidoPecas salvo =
-                repository.salvar(pedido);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(
-                        PedidoPecasMapper.toDTO(salvo)
-                );
-    }
-
-    // =========================
-    // LISTAR
-    // =========================
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(PedidoPecasController.class.getName());
+    private final PedidoPecasService service;
+                                                                                                   
+    public PedidoPecasController() { this.service = new PedidoPecasService(); }
 
     @GetMapping
-    public ResponseEntity<List<PedidoPecasDTO>> listar() {
-
-        List<PedidoPecasDTO> pedidos =
-                repository.listar()
-                        .stream()
-                        .map(PedidoPecasMapper::toDTO)
-                        .toList();
-
-        return ResponseEntity.ok(pedidos);
+    public ResponseEntity<?> listar() {
+        try { return ResponseEntity.ok(service.listar()); } catch (DadosInvalidosException e) {
+            return ResponseEntity.badRequest().body(new ErroDTO(e.getMessage()));
+        } catch (RecursoNaoEncontradoException e) {
+            return ResponseEntity.status(404).body(new ErroDTO(e.getMessage()));
+        } catch (ConflitoDadosException e) {
+            LOG.log(java.util.logging.Level.WARNING,"Conflito de persistência",e);
+            return ResponseEntity.status(409).body(new ErroDTO(e.getMessage()));
+        } catch (PersistenciaException e) {
+            LOG.log(java.util.logging.Level.SEVERE,"Falha de persistência",e);
+            return ResponseEntity.status(500).body(new ErroDTO("Não foi possível concluir a operação."));
+        }
     }
-
-    // =========================
-    // BUSCAR
-    // =========================
 
     @GetMapping("/{codigo}")
-    public ResponseEntity<?> buscar(
-            @PathVariable Long codigo) {
-
-        PedidoPecas pedido =
-                repository.buscarPorCodigo(codigo);
-
-        if (pedido == null) {
-
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("Pedido de peças não encontrado.");
+    public ResponseEntity<?> buscar(@PathVariable Long codigo) {
+        try { return ResponseEntity.ok(service.buscar(codigo)); } catch (DadosInvalidosException e) {
+            return ResponseEntity.badRequest().body(new ErroDTO(e.getMessage()));
+        } catch (RecursoNaoEncontradoException e) {
+            return ResponseEntity.status(404).body(new ErroDTO(e.getMessage()));
+        } catch (ConflitoDadosException e) {
+            LOG.log(java.util.logging.Level.WARNING,"Conflito de persistência",e);
+            return ResponseEntity.status(409).body(new ErroDTO(e.getMessage()));
+        } catch (PersistenciaException e) {
+            LOG.log(java.util.logging.Level.SEVERE,"Falha de persistência",e);
+            return ResponseEntity.status(500).body(new ErroDTO("Não foi possível concluir a operação."));
         }
-
-        return ResponseEntity.ok(
-                PedidoPecasMapper.toDTO(pedido)
-        );
     }
 
-    // =========================
-    // ADICIONAR PEÇA
-    // =========================
+    @PostMapping
+    public ResponseEntity<?> criar(@RequestBody PedidoPecasDTO dto) {
+        try { return ResponseEntity.status(201).body(service.criar(dto)); } catch (DadosInvalidosException e) {
+            return ResponseEntity.badRequest().body(new ErroDTO(e.getMessage()));
+        } catch (RecursoNaoEncontradoException e) {
+            return ResponseEntity.status(404).body(new ErroDTO(e.getMessage()));
+        } catch (ConflitoDadosException e) {
+            LOG.log(java.util.logging.Level.WARNING,"Conflito de persistência",e);
+            return ResponseEntity.status(409).body(new ErroDTO(e.getMessage()));
+        } catch (PersistenciaException e) {
+            LOG.log(java.util.logging.Level.SEVERE,"Falha de persistência",e);
+            return ResponseEntity.status(500).body(new ErroDTO("Não foi possível concluir a operação."));
+        }
+    }
 
     @PostMapping("/{codigo}/itens")
-    public ResponseEntity<?> adicionarItem(
-            @PathVariable Long codigo,
-            @RequestBody br.com.mecaniQA.api.dto.ItemPedidoPecaDTO dto) {
-
-        PedidoPecas pedido =
-                repository.buscarPorCodigo(codigo);
-
-        if (pedido == null) {
-
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("Pedido de peças não encontrado.");
+    public ResponseEntity<?> adicionarItem(@PathVariable Long codigo, @RequestBody ItemPedidoPecaDTO dto) {
+        try { return ResponseEntity.status(201).body(service.adicionarItem(codigo,dto)); } catch (DadosInvalidosException e) {
+            return ResponseEntity.badRequest().body(new ErroDTO(e.getMessage()));
+        } catch (RecursoNaoEncontradoException e) {
+            return ResponseEntity.status(404).body(new ErroDTO(e.getMessage()));
+        } catch (ConflitoDadosException e) {
+            LOG.log(java.util.logging.Level.WARNING,"Conflito de persistência",e);
+            return ResponseEntity.status(409).body(new ErroDTO(e.getMessage()));
+        } catch (PersistenciaException e) {
+            LOG.log(java.util.logging.Level.SEVERE,"Falha de persistência",e);
+            return ResponseEntity.status(500).body(new ErroDTO("Não foi possível concluir a operação."));
         }
-
-        if (pedido.getStatus()
-                != StatusPedidoPecas.EM_ORCAMENTO) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(
-                            "Só é possível adicionar peças a pedidos no status EM_ORCAMENTO."
-                    );
-        }
-
-        if (dto.getPecaCodigo() == null) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("O código da peça é obrigatório.");
-        }
-
-        if (dto.getQuantidade() == null ||
-                dto.getQuantidade() <= 0) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(
-                            "A quantidade deve ser maior que zero."
-                    );
-        }
-
-        Peca peca =
-                pecaRepository.buscarPorCodigo(
-                        dto.getPecaCodigo()
-                );
-
-        if (peca == null) {
-
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("Peça não encontrada.");
-        }
-
-        ItemPedidoPeca item =
-                new ItemPedidoPeca.Builder()
-                        .peca(peca)
-                        .quantidade(dto.getQuantidade())
-                        .build();
-
-        pedido.adicionarItem(item);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(
-                        PedidoPecasMapper.toDTO(pedido)
-                );
     }
 
-    // =========================
-    // ALTERAR STATUS
-    // =========================
-
     @PatchMapping("/{codigo}/status")
-    public ResponseEntity<?> alterarStatus(
-            @PathVariable Long codigo,
-            @RequestBody PedidoPecasDTO dto) {
-
-        PedidoPecas pedido =
-                repository.buscarPorCodigo(codigo);
-
-        if (pedido == null) {
-
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body("Pedido de peças não encontrado.");
+    public ResponseEntity<?> alterarStatus(@PathVariable Long codigo, @RequestBody PedidoPecasDTO dto) {
+        try { return ResponseEntity.ok(service.alterarStatus(codigo,dto)); } catch (DadosInvalidosException e) {
+            return ResponseEntity.badRequest().body(new ErroDTO(e.getMessage()));
+        } catch (RecursoNaoEncontradoException e) {
+            return ResponseEntity.status(404).body(new ErroDTO(e.getMessage()));
+        } catch (ConflitoDadosException e) {
+            LOG.log(java.util.logging.Level.WARNING,"Conflito de persistência",e);
+            return ResponseEntity.status(409).body(new ErroDTO(e.getMessage()));
+        } catch (PersistenciaException e) {
+            LOG.log(java.util.logging.Level.SEVERE,"Falha de persistência",e);
+            return ResponseEntity.status(500).body(new ErroDTO("Não foi possível concluir a operação."));
         }
-
-        if (dto.getStatus() == null) {
-
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("O status é obrigatório.");
-        }
-
-        pedido.setStatus(dto.getStatus());
-
-        return ResponseEntity.ok(
-                PedidoPecasMapper.toDTO(pedido)
-        );
     }
 }

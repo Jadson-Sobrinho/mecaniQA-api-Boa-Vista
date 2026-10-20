@@ -1,71 +1,48 @@
 package br.com.mecaniQA.api.repository;
 
+import java.util.*;
+import br.com.mecaniQA.api.config.ConnectionFactory;
 import br.com.mecaniQA.api.model.Peca;
+import br.com.mecaniQA.api.mapper.PecaResultSetMapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class PecaRepository {
-
+public class PecaRepository extends JdbcSupport implements Repository<Peca, Long> {
+                                                                                                 
     private static PecaRepository instance;
 
-    private final List<Peca> pecas;
+                                                                                        
+    private PecaRepository() { super(ConnectionFactory.getInstance()); }
 
-    private PecaRepository() {
-        pecas = new ArrayList<>();
-    }
-
-    public static PecaRepository getInstance() {
-
+                                                
+    public static synchronized PecaRepository getInstance() {
         if (instance == null) {
             instance = new PecaRepository();
         }
-
         return instance;
     }
 
-    public List<Peca> listar() {
-        return pecas;
+    @Override public Peca save(Peca e) {
+        return db.transaction(() -> {
+            long id = insert("INSERT INTO pecas (nome,codigo_barras,fornecedor_marca,quantidade_estoque,preco_custo,preco_venda,categoria,tamanho,cor,data_cadastro,data_ultima_atualizacao) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                e.getNome(),e.getCodigoBarras(),e.getFornecedorMarca(),e.getQuantidadeEstoque(),e.getPrecoCusto(),e.getPrecoVenda(),e.getCategoria(),e.getTamanho(),e.getCor(),e.getDataCadastro(),e.getDataUltimaAtualizacao());
+            e.setCodigo(id);
+            return findById(id).orElseThrow();
+        });
     }
-
-    public void salvar(Peca peca) {
-        pecas.add(peca);
+    @Override public Optional<Peca> findById(Long id) {
+        return query("SELECT * FROM pecas WHERE codigo=?", PecaResultSetMapper::map, id).stream().findFirst();
     }
-
-    public Peca buscarPorCodigo(Long codigo) {
-        for (Peca peca : pecas) {
-            if (peca.getCodigo().equals(codigo)) {
-                return peca;
-            }
-        }
-
-        return null;
+    @Override public List<Peca> findAll() {
+        return query("SELECT * FROM pecas ORDER BY codigo", PecaResultSetMapper::map);
     }
-
-    public boolean atualizar(Long codigo, Peca pecaAtualizada) {
-        Peca peca = buscarPorCodigo(codigo);
-
-        if (peca == null) {
-            return false;
-        }
-
-        peca.setNome(pecaAtualizada.getNome());
-        peca.setCodigoBarras(pecaAtualizada.getCodigoBarras());
-        peca.setFornecedorMarca(pecaAtualizada.getFornecedorMarca());
-        peca.setQuantidadeEstoque(pecaAtualizada.getQuantidadeEstoque());
-        peca.setPrecoCusto(pecaAtualizada.getPrecoCusto());
-        peca.setPrecoVenda(pecaAtualizada.getPrecoVenda());
-        peca.setCategoria(pecaAtualizada.getCategoria());
-        peca.setTamanho(pecaAtualizada.getTamanho());
-        peca.setCor(pecaAtualizada.getCor());
-
-        return true;
+    @Override public Peca update(Peca e) {
+        return db.transaction(() -> {
+            requireAffected(execute("UPDATE pecas SET nome=?,codigo_barras=?,fornecedor_marca=?,quantidade_estoque=?,preco_custo=?,preco_venda=?,categoria=?,tamanho=?,cor=?,data_ultima_atualizacao=? WHERE codigo=?",
+                e.getNome(),e.getCodigoBarras(),e.getFornecedorMarca(),e.getQuantidadeEstoque(),e.getPrecoCusto(),e.getPrecoVenda(),e.getCategoria(),e.getTamanho(),e.getCor(),java.time.LocalDateTime.now(),e.getCodigo()));
+            return findById(e.getCodigo()).orElseThrow();
+        });
     }
-
-    public boolean deletar(Long codigo) {
-        return pecas.removeIf(peca ->
-                peca.getCodigo().equals(codigo)
-        );
+    @Override public void deleteById(Long id) { requireAffected(execute("DELETE FROM pecas WHERE codigo=?", id)); }
+    @Override public boolean existsById(Long id) {
+        return !query("SELECT codigo FROM pecas WHERE codigo=?", rs -> rs.getLong(1), id).isEmpty();
     }
 }
-

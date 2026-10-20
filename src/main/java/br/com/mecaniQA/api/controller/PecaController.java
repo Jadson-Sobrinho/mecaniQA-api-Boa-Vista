@@ -1,111 +1,91 @@
 package br.com.mecaniQA.api.controller;
 
-import br.com.mecaniQA.api.dto.PecaDTO;
-import br.com.mecaniQA.api.mapper.PecaMapper;
-import br.com.mecaniQA.api.model.Peca;
-import br.com.mecaniQA.api.repository.PecaRepository;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import br.com.mecaniQA.api.dto.*;
+import br.com.mecaniQA.api.service.PecaService;
+import br.com.mecaniQA.api.exception.*;
 
 @RestController
 @RequestMapping("/api/pecas")
 public class PecaController {
-
-    private final PecaRepository repository;
-
-    public PecaController() {
-        this.repository = PecaRepository.getInstance();
-    }
+    private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(PecaController.class.getName());
+    private final PecaService service;
+                                                                                                   
+    public PecaController() { this.service = new PecaService(); }
 
     @GetMapping
-    public ResponseEntity<List<PecaDTO>> listar() {
-
-        List<PecaDTO> pecas = repository.listar().stream().map(PecaMapper::toDTO).toList();
-
-        return ResponseEntity.ok(pecas);
+    public ResponseEntity<?> listar() {
+        try { return ResponseEntity.ok(service.listar()); } catch (DadosInvalidosException e) {
+            return ResponseEntity.badRequest().body(new ErroDTO(e.getMessage()));
+        } catch (RecursoNaoEncontradoException e) {
+            return ResponseEntity.status(404).body(new ErroDTO(e.getMessage()));
+        } catch (ConflitoDadosException e) {
+            LOG.log(java.util.logging.Level.WARNING,"Conflito de persistência",e);
+            return ResponseEntity.status(409).body(new ErroDTO(e.getMessage()));
+        } catch (PersistenciaException e) {
+            LOG.log(java.util.logging.Level.SEVERE,"Falha de persistência",e);
+            return ResponseEntity.status(500).body(new ErroDTO("Não foi possível concluir a operação."));
+        }
     }
 
     @GetMapping("/{codigo}")
-    public ResponseEntity<?> buscarPorCodigo(@PathVariable Long codigo) {
-
-        Peca peca = repository.buscarPorCodigo(codigo);
-
-        if (peca == null) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Peça não encontrada.");
+    public ResponseEntity<?> buscar(@PathVariable Long codigo) {
+        try { return ResponseEntity.ok(service.buscar(codigo)); } catch (DadosInvalidosException e) {
+            return ResponseEntity.badRequest().body(new ErroDTO(e.getMessage()));
+        } catch (RecursoNaoEncontradoException e) {
+            return ResponseEntity.status(404).body(new ErroDTO(e.getMessage()));
+        } catch (ConflitoDadosException e) {
+            LOG.log(java.util.logging.Level.WARNING,"Conflito de persistência",e);
+            return ResponseEntity.status(409).body(new ErroDTO(e.getMessage()));
+        } catch (PersistenciaException e) {
+            LOG.log(java.util.logging.Level.SEVERE,"Falha de persistência",e);
+            return ResponseEntity.status(500).body(new ErroDTO("Não foi possível concluir a operação."));
         }
-
-        return ResponseEntity.ok(PecaMapper.toDTO(peca));
     }
 
     @PostMapping
-    public ResponseEntity<?> salvar(@RequestBody PecaDTO dto) {
-
-        if (dto.getNome() == null || dto.getNome().trim().isEmpty()) {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O nome da peça é obrigatório.");
+    public ResponseEntity<?> criar(@RequestBody PecaDTO dto) {
+        try { return ResponseEntity.status(201).body(service.criar(dto)); } catch (DadosInvalidosException e) {
+            return ResponseEntity.badRequest().body(new ErroDTO(e.getMessage()));
+        } catch (RecursoNaoEncontradoException e) {
+            return ResponseEntity.status(404).body(new ErroDTO(e.getMessage()));
+        } catch (ConflitoDadosException e) {
+            LOG.log(java.util.logging.Level.WARNING,"Conflito de persistência",e);
+            return ResponseEntity.status(409).body(new ErroDTO(e.getMessage()));
+        } catch (PersistenciaException e) {
+            LOG.log(java.util.logging.Level.SEVERE,"Falha de persistência",e);
+            return ResponseEntity.status(500).body(new ErroDTO("Não foi possível concluir a operação."));
         }
-
-        if (dto.getCategoria() == null) {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A categoria da peça é obrigatória.");
-        }
-
-        Peca peca = PecaMapper.toEntity(dto);
-
-        repository.salvar(peca);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(PecaMapper.toDTO(peca));
     }
 
     @PutMapping("/{codigo}")
     public ResponseEntity<?> atualizar(@PathVariable Long codigo, @RequestBody PecaDTO dto) {
-
-        Peca existente = repository.buscarPorCodigo(codigo);
-
-        if (existente == null) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Peça não encontrada.");
+        try { return ResponseEntity.ok(service.atualizar(codigo,dto)); } catch (DadosInvalidosException e) {
+            return ResponseEntity.badRequest().body(new ErroDTO(e.getMessage()));
+        } catch (RecursoNaoEncontradoException e) {
+            return ResponseEntity.status(404).body(new ErroDTO(e.getMessage()));
+        } catch (ConflitoDadosException e) {
+            LOG.log(java.util.logging.Level.WARNING,"Conflito de persistência",e);
+            return ResponseEntity.status(409).body(new ErroDTO(e.getMessage()));
+        } catch (PersistenciaException e) {
+            LOG.log(java.util.logging.Level.SEVERE,"Falha de persistência",e);
+            return ResponseEntity.status(500).body(new ErroDTO("Não foi possível concluir a operação."));
         }
-
-        if (dto.getNome() == null || dto.getNome().trim().isEmpty()) {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O nome da peça é obrigatório.");
-        }
-
-        if (dto.getCategoria() == null) {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A categoria da peça é obrigatória.");
-        }
-
-        Peca pecaAtualizada = PecaMapper.toEntity(dto);
-
-        boolean atualizada = repository.atualizar(codigo, pecaAtualizada);
-
-        if (!atualizada) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Peça não encontrada.");
-        }
-
-        Peca peca = repository.buscarPorCodigo(codigo);
-
-        return ResponseEntity.ok(PecaMapper.toDTO(peca));
     }
 
     @DeleteMapping("/{codigo}")
-    public ResponseEntity<?> deletar(@PathVariable Long codigo) {
-
-        boolean removido = repository.deletar(codigo);
-
-        if (!removido) {
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Peça não encontrada.");
+    public ResponseEntity<?> excluir(@PathVariable Long codigo) {
+        try { service.excluir(codigo); return ResponseEntity.noContent().build(); } catch (DadosInvalidosException e) {
+            return ResponseEntity.badRequest().body(new ErroDTO(e.getMessage()));
+        } catch (RecursoNaoEncontradoException e) {
+            return ResponseEntity.status(404).body(new ErroDTO(e.getMessage()));
+        } catch (ConflitoDadosException e) {
+            LOG.log(java.util.logging.Level.WARNING,"Conflito de persistência",e);
+            return ResponseEntity.status(409).body(new ErroDTO(e.getMessage()));
+        } catch (PersistenciaException e) {
+            LOG.log(java.util.logging.Level.SEVERE,"Falha de persistência",e);
+            return ResponseEntity.status(500).body(new ErroDTO("Não foi possível concluir a operação."));
         }
-
-        return ResponseEntity.noContent().build();
     }
 }

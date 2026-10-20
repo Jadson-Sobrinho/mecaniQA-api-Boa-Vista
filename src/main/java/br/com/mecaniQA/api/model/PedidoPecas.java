@@ -25,9 +25,9 @@ public class PedidoPecas {
                 : new ArrayList<>();
     }
 
-    // =========================
-    // BUILDER
-    // =========================
+                                
+              
+                                
 
     public static class Builder {
 
@@ -88,17 +88,13 @@ public class PedidoPecas {
         }
     }
 
-    // =========================
-    // ITENS
-    // =========================
+                                
+            
+                                
 
     public boolean adicionarItem(ItemPedidoPeca item) {
 
         if (item == null) {
-            return false;
-        }
-
-        if (status != StatusPedidoPecas.EM_ORCAMENTO) {
             return false;
         }
 
@@ -117,10 +113,6 @@ public class PedidoPecas {
             return false;
         }
 
-        if (status != StatusPedidoPecas.EM_ORCAMENTO) {
-            return false;
-        }
-
         if (!itens.remove(item)) {
             return false;
         }
@@ -132,9 +124,9 @@ public class PedidoPecas {
         return true;
     }
 
-    // =========================
-    // GETTERS
-    // =========================
+                                
+              
+                                
 
     public Long getCodigo() {
         return codigo;
@@ -148,9 +140,9 @@ public class PedidoPecas {
         return itens;
     }
 
-    // =========================
-    // SETTERS
-    // =========================
+                                
+              
+                                
 
     public void setCodigo(Long codigo) {
         this.codigo = codigo;

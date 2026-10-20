@@ -1,66 +1,48 @@
 package br.com.mecaniQA.api.repository;
 
+import java.util.*;
+import br.com.mecaniQA.api.config.ConnectionFactory;
 import br.com.mecaniQA.api.model.Servico;
+import br.com.mecaniQA.api.mapper.ServicoResultSetMapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ServicoRepository {
-
+public class ServicoRepository extends JdbcSupport implements Repository<Servico, Long> {
+                                                                                                 
     private static ServicoRepository instance;
 
-    private final List<Servico> servicos;
+                                                                                           
+    private ServicoRepository() { super(ConnectionFactory.getInstance()); }
 
-    private ServicoRepository() {
-        servicos = new ArrayList<>();
-    }
-
-    public static ServicoRepository getInstance() {
-
+                                                
+    public static synchronized ServicoRepository getInstance() {
         if (instance == null) {
             instance = new ServicoRepository();
         }
-
         return instance;
     }
 
-    public List<Servico> listar() {
-        return servicos;
+    @Override public Servico save(Servico e) {
+        return db.transaction(() -> {
+            long id = insert("INSERT INTO servicos (nome,tempo_estimado_minutos,custo_tabelado,data_criacao,data_ultima_atualizacao) VALUES (?,?,?,?,?)",
+                e.getNome(),e.getTempoEstimado(),e.getCustoTabelado(),e.getDataCriacao(),e.getDataUltimaAtualizacao());
+            e.setCodigo(id);
+            return findById(id).orElseThrow();
+        });
     }
-
-    public void salvar(Servico servico) {
-        servicos.add(servico);
+    @Override public Optional<Servico> findById(Long id) {
+        return query("SELECT * FROM servicos WHERE codigo=?", ServicoResultSetMapper::map, id).stream().findFirst();
     }
-
-    public Servico buscarPorCodigo(Long codigo) {
-        for (Servico servico : servicos) {
-            if (servico.getCodigo().equals(codigo)) {
-                return servico;
-            }
-        }
-
-        return null;
+    @Override public List<Servico> findAll() {
+        return query("SELECT * FROM servicos ORDER BY codigo", ServicoResultSetMapper::map);
     }
-
-    public boolean atualizar(Long codigo, Servico servicoAtualizado) {
-        Servico servico = buscarPorCodigo(codigo);
-
-        if (servico == null) {
-            return false;
-        }
-
-        servico.setNome(servicoAtualizado.getNome());
-        servico.setTempoEstimado(servicoAtualizado.getTempoEstimado());
-        servico.setCustoTabelado(servicoAtualizado.getCustoTabelado());
-
-        return true;
+    @Override public Servico update(Servico e) {
+        return db.transaction(() -> {
+            requireAffected(execute("UPDATE servicos SET nome=?,tempo_estimado_minutos=?,custo_tabelado=?,data_ultima_atualizacao=? WHERE codigo=?",
+                e.getNome(),e.getTempoEstimado(),e.getCustoTabelado(),java.time.LocalDateTime.now(),e.getCodigo()));
+            return findById(e.getCodigo()).orElseThrow();
+        });
     }
-
-    public boolean deletar(Long codigo) {
-        return servicos.removeIf(servico ->
-                servico.getCodigo().equals(codigo)
-        );
+    @Override public void deleteById(Long id) { requireAffected(execute("DELETE FROM servicos WHERE codigo=?", id)); }
+    @Override public boolean existsById(Long id) {
+        return !query("SELECT codigo FROM servicos WHERE codigo=?", rs -> rs.getLong(1), id).isEmpty();
     }
 }
-
-

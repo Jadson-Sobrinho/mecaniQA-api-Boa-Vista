@@ -1,17 +1,18 @@
 package br.com.mecaniQA.api.model;
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 public class Peca {
 
-    private static long proximoCodigo = 1L;
+
 
     private Long codigo;
     private String nome;
     private String codigoBarras;
     private String fornecedorMarca;
     private int quantidadeEstoque;
-    private double precoCusto;
-    private double precoVenda;
+    private BigDecimal precoCusto;
+    private BigDecimal precoVenda;
     private LocalDateTime dataCadastro;
     private LocalDateTime dataUltimaAtualizacao;
     private CategoriaPeca categoria;
@@ -23,11 +24,11 @@ public class Peca {
             String codigoBarras,
             String fornecedorMarca,
             int quantidadeEstoque,
-            double precoCusto,
-            double precoVenda,
+            BigDecimal precoCusto,
+            BigDecimal precoVenda,
             CategoriaPeca categoria
     ) {
-        this.codigo = proximoCodigo++;
+
         this.nome = nome;
         this.codigoBarras = codigoBarras;
         this.fornecedorMarca = fornecedorMarca;
@@ -79,20 +80,20 @@ public class Peca {
         atualizarData();
     }
 
-    public double getPrecoCusto() {
+    public BigDecimal getPrecoCusto() {
         return precoCusto;
     }
 
-    public void setPrecoCusto(double precoCusto) {
+    public void setPrecoCusto(BigDecimal precoCusto) {
         this.precoCusto = precoCusto;
         atualizarData();
     }
 
-    public double getPrecoVenda() {
+    public BigDecimal getPrecoVenda() {
         return precoVenda;
     }
 
-    public void setPrecoVenda(double precoVenda) {
+    public void setPrecoVenda(BigDecimal precoVenda) {
         this.precoVenda = precoVenda;
         atualizarData();
     }
@@ -134,5 +135,10 @@ public class Peca {
 
     private void atualizarData() {
         this.dataUltimaAtualizacao = LocalDateTime.now();
+    }
+    public void setCodigo(Long codigo) { this.codigo = codigo; }
+    public void restaurarDatas(LocalDateTime criacao, LocalDateTime atualizacao) {
+        this.dataCadastro = criacao;
+        this.dataUltimaAtualizacao = atualizacao;
     }
 }
