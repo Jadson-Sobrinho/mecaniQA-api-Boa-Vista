@@ -26,17 +26,6 @@ public abstract class JdbcSupport {
         T execute(Connection connection) throws SQLException;
     }
 
-    /*
-     * TEMPLATE METHOD
-     *
-     * Define a sequência padrão das operações JDBC:
-     * 1. Preparar a execução.
-     * 2. Executar a operação específica.
-     * 3. Executar a etapa final.
-     *
-     * O método é final para impedir que os repositórios
-     * alterem essa sequência.
-     */
     protected final <T> T executarTemplate(
             String sql,
             JdbcOperation<T> operacao) {
@@ -51,19 +40,14 @@ public abstract class JdbcSupport {
         });
     }
 
-    /*
-     * Etapas que podem ser personalizadas pelas subclasses.
-     */
     protected void beforeOperation(
             Connection connection,
             String sql) throws SQLException {
-        // Etapa opcional antes da operação.
     }
 
     protected void afterOperation(
             Connection connection,
             String sql) {
-        // Etapa opcional após a operação.
     }
 
     protected static void bind(
