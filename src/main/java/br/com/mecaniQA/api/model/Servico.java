@@ -1,23 +1,25 @@
 package br.com.mecaniQA.api.model;
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 public class Servico {
 
-    private static long proximoCodigo = 1L;
+
 
     private Long codigo;
     private String nome;
-    private String tempoEstimado;
-    private double custoTabelado;
+                                                 
+    private Integer tempoEstimado;
+    private BigDecimal custoTabelado;
     private LocalDateTime dataCriacao;
     private LocalDateTime dataUltimaAtualizacao;
 
     public Servico(
             String nome,
-            String tempoEstimado,
-            double custoTabelado
+            Integer tempoEstimado,
+            BigDecimal custoTabelado
     ) {
-        this.codigo = proximoCodigo++;
+
         this.nome = nome;
         this.tempoEstimado = tempoEstimado;
         this.custoTabelado = custoTabelado;
@@ -38,20 +40,20 @@ public class Servico {
         atualizarData();
     }
 
-    public String getTempoEstimado() {
+    public Integer getTempoEstimado() {
         return tempoEstimado;
     }
 
-    public void setTempoEstimado(String tempoEstimado) {
+    public void setTempoEstimado(Integer tempoEstimado) {
         this.tempoEstimado = tempoEstimado;
         atualizarData();
     }
 
-    public double getCustoTabelado() {
+    public BigDecimal getCustoTabelado() {
         return custoTabelado;
     }
 
-    public void setCustoTabelado(double custoTabelado) {
+    public void setCustoTabelado(BigDecimal custoTabelado) {
         this.custoTabelado = custoTabelado;
         atualizarData();
     }
@@ -66,5 +68,10 @@ public class Servico {
 
     private void atualizarData() {
         this.dataUltimaAtualizacao = LocalDateTime.now();
+    }
+    public void setCodigo(Long codigo) { this.codigo = codigo; }
+    public void restaurarDatas(LocalDateTime criacao, LocalDateTime atualizacao) {
+        this.dataCriacao = criacao;
+        this.dataUltimaAtualizacao = atualizacao;
     }
 }

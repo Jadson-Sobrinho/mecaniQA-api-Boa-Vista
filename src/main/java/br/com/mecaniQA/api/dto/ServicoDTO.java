@@ -1,11 +1,14 @@
 package br.com.mecaniQA.api.dto;
 
+import java.math.BigDecimal;
+
 public class ServicoDTO {
 
     private Long codigo;
     private String nome;
-    private String tempoEstimado;
-    private double custoTabelado;
+                                                                               
+    private Integer tempoEstimado;
+    private BigDecimal custoTabelado;
 
     public ServicoDTO() {
     }
@@ -13,8 +16,8 @@ public class ServicoDTO {
     public ServicoDTO(
             Long codigo,
             String nome,
-            String tempoEstimado,
-            double custoTabelado) {
+            Integer tempoEstimado,
+            BigDecimal custoTabelado) {
 
         this.codigo = codigo;
         this.nome = nome;
@@ -30,11 +33,11 @@ public class ServicoDTO {
         return nome;
     }
 
-    public String getTempoEstimado() {
+    public Integer getTempoEstimado() {
         return tempoEstimado;
     }
 
-    public double getCustoTabelado() {
+    public BigDecimal getCustoTabelado() {
         return custoTabelado;
     }
 
@@ -46,11 +49,11 @@ public class ServicoDTO {
         this.nome = nome;
     }
 
-    public void setTempoEstimado(String tempoEstimado) {
+    public void setTempoEstimado(Integer tempoEstimado) {
         this.tempoEstimado = tempoEstimado;
     }
 
-    public void setCustoTabelado(double custoTabelado) {
+    public void setCustoTabelado(BigDecimal custoTabelado) {
         this.custoTabelado = custoTabelado;
     }
 }

@@ -1,386 +1,583 @@
 {
   "info": {
-    "_postman_id": "a99bd6e1-5a7c-40c2-9a87-a363baa205fe",
-    "name": "TESTES - User Story",
+    "name": "TESTES - User Story — atualizado para OAT 3",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "35186501"
+    "description": "Execute a coleção em ordem. CRUD de peças e serviços usa registros separados do fluxo de pedidos. IDs são capturados das respostas; não pressupõe banco vazio. O fluxo de pedidos mantém dados para verificar persistência após reinício."
   },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "pecaId",
+      "value": ""
+    },
+    {
+      "key": "servicoId",
+      "value": ""
+    },
+    {
+      "key": "ordemId",
+      "value": ""
+    },
+    {
+      "key": "pedidoId",
+      "value": ""
+    },
+    {
+      "key": "crudPecaId",
+      "value": ""
+    },
+    {
+      "key": "crudServicoId",
+      "value": ""
+    }
+  ],
   "item": [
     {
-      "name": "OAT1",
+      "name": "CRUD completo — Peça",
       "item": [
         {
-          "name": "Gestão de Peças",
-          "item": [
+          "name": "Cadastrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pecas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Filtro CRUD\",\n  \"codigoBarras\": \"789123\",\n  \"fornecedorMarca\": \"Marca\",\n  \"quantidadeEstoque\": 5,\n  \"precoCusto\": 10,\n  \"precoVenda\": 20,\n  \"categoria\": \"MOTOR\"\n}"
+            }
+          },
+          "event": [
             {
-              "name": "US01 - Cadastro de nova Peça",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"nome\": \"Pastilha de Freio Dianteira\",\r\n  \"codigoBarras\": \"7891234567890\",\r\n  \"fornecedorMarca\": \"Bosch\",\r\n  \"quantidadeEstoque\": 20,\r\n  \"precoCusto\": 85.50,\r\n  \"precoVenda\": 129.90,\r\n  \"categoria\": \"FREIOS\",\r\n  \"tamanho\": \"M\",\r\n  \"cor\": \"Preto\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "http://localhost:8080/api/pecas",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "pecas"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "US02 - Listar catálogo de peças",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "http://localhost:8080/api/pecas",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "pecas"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "US03 - Atualizar peça do catálogo",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"nome\": \"Pastilha de Freio Dianteira Bosch\",\r\n  \"codigoBarras\": \"7891234567890\",\r\n  \"fornecedorMarca\": \"Bosch\",\r\n  \"quantidadeEstoque\": 35,\r\n  \"precoCusto\": 92.00,\r\n  \"precoVenda\": 145.90,\r\n  \"categoria\": \"FREIOS\",\r\n  \"tamanho\": \"M\",\r\n  \"cor\": \"Preto\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "http://localhost:8080/api/pecas/1",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "pecas",
-                    "1"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "US04 - Excluir peça do catálogo",
-              "request": {
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                  "raw": "http://localhost:8080/api/pecas/1",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "pecas",
-                    "1"
-                  ]
-                }
-              },
-              "response": []
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"crudPecaId\", pm.response.json().codigo);"
+                ]
+              }
             }
           ]
         },
         {
-          "name": "Gestão de Serviços",
-          "item": [
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/pecas"
+          },
+          "event": [
             {
-              "name": "US05 - Cadastro de novo Serviço",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"nome\": \"Troca de Óleo\",\r\n  \"tempoEstimado\": \"30 minutos\",\r\n  \"custoTabelado\": 80.00\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "http://localhost:8080/api/servicos",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "servicos"
-                  ]
-                }
-              },
-              "response": []
-            },
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar pelo código retornado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/pecas/{{crudPecaId}}"
+          },
+          "event": [
             {
-              "name": "US06 - Listar catálogo de serviços",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "http://localhost:8080/api/servicos",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "servicos"
-                  ]
-                }
-              },
-              "response": []
-            },
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pecas/{{crudPecaId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Filtro CRUD atualizado\",\n  \"codigoBarras\": \"789123\",\n  \"fornecedorMarca\": \"Marca\",\n  \"quantidadeEstoque\": 5,\n  \"precoCusto\": 10,\n  \"precoVenda\": 20,\n  \"categoria\": \"MOTOR\"\n}"
+            }
+          },
+          "event": [
             {
-              "name": "US07 - Atualizar serviço do catálogo",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"nome\": \"Troca de Óleo Completa\",\r\n  \"tempoEstimado\": \"45 minutos\",\r\n  \"custoTabelado\": 95.00\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "http://localhost:8080/api/servicos/1",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "servicos",
-                    "1"
-                  ]
-                }
-              },
-              "response": []
-            },
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Excluir registro sem vínculos",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/pecas/{{crudPecaId}}"
+          },
+          "event": [
             {
-              "name": "US08 - Excluir serviço do catálogo",
-              "request": {
-                "method": "DELETE",
-                "header": [],
-                "url": {
-                  "raw": "http://localhost:8080/api/servicos/1",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "servicos",
-                    "1"
-                  ]
-                }
-              },
-              "response": []
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar exclusão",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/pecas/{{crudPecaId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
             }
           ]
         }
       ]
     },
     {
-      "name": "OAT2",
+      "name": "CRUD completo — Serviço",
       "item": [
         {
-          "name": "Gestão de OS",
-          "item": [
+          "name": "Cadastrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/servicos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Troca CRUD\",\n  \"tempoEstimado\": 60,\n  \"custoTabelado\": 100\n}"
+            }
+          },
+          "event": [
             {
-              "name": "US01 - Criar uma Ordem de Serviço (OS)",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"descricao\": \"Troca das pastilhas de freio dianteiras\",\r\n  \"status\": \"ABERTO\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "http://localhost:8080/api/ordens-servico",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "ordens-servico"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "US02 - Modificar status da Ordem de Serviço",
-              "request": {
-                "method": "PUT",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"descricao\": \"Troca das pastilhas de freio dianteiras\",\r\n  \"status\": \"EXECUCAO\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "http://localhost:8080/api/ordens-servico/1",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "ordens-servico",
-                    "1"
-                  ]
-                }
-              },
-              "response": []
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"crudServicoId\", pm.response.json().codigo);"
+                ]
+              }
             }
           ]
         },
         {
-          "name": "Gestão de Pedido Peças",
-          "item": [
+          "name": "Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/servicos"
+          },
+          "event": [
             {
-              "name": "US03 - Criar um Pedido",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "http://localhost:8080/api/pedidos-pecas",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "pedidos-pecas"
-                  ]
-                }
-              },
-              "response": []
-            },
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar pelo código retornado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/servicos/{{crudServicoId}}"
+          },
+          "event": [
             {
-              "name": "US04 - Adicionar peças a um pedido existente",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"pecaCodigo\": 1,\r\n  \"quantidade\": 4\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "http://localhost:8080/api/pedidos-pecas/1/itens",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "pedidos-pecas",
-                    "1",
-                    "itens"
-                  ]
-                }
-              },
-              "response": []
-            },
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Atualizar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/servicos/{{crudServicoId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Troca CRUD atualizado\",\n  \"tempoEstimado\": 60,\n  \"custoTabelado\": 100\n}"
+            }
+          },
+          "event": [
             {
-              "name": "US05 - Modificar o status do Pedido",
-              "request": {
-                "method": "PATCH",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n  \"status\": \"PENDENTE_PAGAMENTO\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "http://localhost:8080/api/pedidos-pecas/1/status",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "port": "8080",
-                  "path": [
-                    "api",
-                    "pedidos-pecas",
-                    "1",
-                    "status"
-                  ]
-                }
-              },
-              "response": []
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Excluir registro sem vínculos",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/servicos/{{crudServicoId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Confirmar exclusão",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/servicos/{{crudServicoId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pedidos, itens e vínculos — OAT 2/3",
+      "item": [
+        {
+          "name": "1 - Criar peça",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pecas",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Filtro\",\n  \"codigoBarras\": \"7890001\",\n  \"fornecedorMarca\": \"Marca\",\n  \"quantidadeEstoque\": 10,\n  \"precoCusto\": 15.5,\n  \"precoVenda\": 25.9,\n  \"categoria\": \"MOTOR\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"pecaId\", pm.response.json().codigo);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2 - Criar serviço",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/servicos",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Troca de óleo\",\n  \"tempoEstimado\": 60,\n  \"custoTabelado\": 100\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"servicoId\", pm.response.json().codigo);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3 - Criar ordem",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/ordens-servico",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Revisão\",\n  \"status\": \"ABERTO\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"ordemId\", pm.response.json().codigo);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3.1 - Alterar status da ordem",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/ordens-servico/{{ordemId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descricao\": \"Revisão em andamento\",\n  \"status\": \"EXECUCAO\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4 - Criar pedido vazio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos-pecas",
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"201\", () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"pedidoId\", pm.response.json().codigo);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "5 - Adicionar item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos-pecas/{{pedidoId}}/itens",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pecaCodigo\": \"{{pecaId}}\",\n  \"quantidade\": 2\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"201\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "6 - Consultar pedido (repetir após reiniciar API)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/pedidos-pecas/{{pedidoId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Item persistido\", () => pm.expect(pm.response.json().itens.length).to.be.above(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "7 - Excluir peça vinculada deve falhar",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/pecas/{{pecaId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "8 - Alterar status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos-pecas/{{pedidoId}}/status",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PAGO\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "9 - Pedido pago recusa item",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/pedidos-pecas/{{pedidoId}}/itens",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pecaCodigo\": \"{{pecaId}}\",\n  \"quantidade\": 1\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"400\", () => pm.response.to.have.status(400));"
+                ]
+              }
             }
           ]
         }

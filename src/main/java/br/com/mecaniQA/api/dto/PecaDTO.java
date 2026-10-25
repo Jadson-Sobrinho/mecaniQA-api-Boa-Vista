@@ -2,15 +2,17 @@ package br.com.mecaniQA.api.dto;
 
 import br.com.mecaniQA.api.model.CategoriaPeca;
 
+import java.math.BigDecimal;
+
 public class PecaDTO {
 
     private Long codigo;
     private String nome;
     private String codigoBarras;
     private String fornecedorMarca;
-    private int quantidadeEstoque;
-    private double precoCusto;
-    private double precoVenda;
+    private Integer quantidadeEstoque;
+    private BigDecimal precoCusto;
+    private BigDecimal precoVenda;
     private CategoriaPeca categoria;
     private String tamanho;
     private String cor;
@@ -23,9 +25,9 @@ public class PecaDTO {
             String nome,
             String codigoBarras,
             String fornecedorMarca,
-            int quantidadeEstoque,
-            double precoCusto,
-            double precoVenda,
+            Integer quantidadeEstoque,
+            BigDecimal precoCusto,
+            BigDecimal precoVenda,
             CategoriaPeca categoria,
             String tamanho,
             String cor) {
@@ -58,15 +60,15 @@ public class PecaDTO {
         return fornecedorMarca;
     }
 
-    public int getQuantidadeEstoque() {
+    public Integer getQuantidadeEstoque() {
         return quantidadeEstoque;
     }
 
-    public double getPrecoCusto() {
+    public BigDecimal getPrecoCusto() {
         return precoCusto;
     }
 
-    public double getPrecoVenda() {
+    public BigDecimal getPrecoVenda() {
         return precoVenda;
     }
 
@@ -98,15 +100,15 @@ public class PecaDTO {
         this.fornecedorMarca = fornecedorMarca;
     }
 
-    public void setQuantidadeEstoque(int quantidadeEstoque) {
+    public void setQuantidadeEstoque(Integer quantidadeEstoque) {
         this.quantidadeEstoque = quantidadeEstoque;
     }
 
-    public void setPrecoCusto(double precoCusto) {
+    public void setPrecoCusto(BigDecimal precoCusto) {
         this.precoCusto = precoCusto;
     }
 
-    public void setPrecoVenda(double precoVenda) {
+    public void setPrecoVenda(BigDecimal precoVenda) {
         this.precoVenda = precoVenda;
     }
 
